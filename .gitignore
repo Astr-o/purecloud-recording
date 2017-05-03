@@ -1,0 +1,9 @@
+# Node Modules
+/node_modules/
+
+# Dev environment directories
+/.vscode/
+/test/output/
+
+# Environment Vars
+.env
