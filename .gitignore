@@ -7,3 +7,6 @@
 
 # Environment Vars
 .env
+
+# Debug logs
+npm-debug.log

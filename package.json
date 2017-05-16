@@ -6,11 +6,18 @@
     "scripts": {
         "test": "node test/test.js"
     },
-    "author": "",
+    "engines": {
+        "node": ">=6.10"
+    },
+    "author": "Kroum Klutchkov <kroum.klutchkov@gmail.com>",
     "license": "MIT",
     "dependencies": {
         "async": "^2.4.0",
         "download": "^6.0.0",
         "purecloud_api_sdk_javascript": "^0.88.8"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Astr-o/purecloud-recording"
     }
 }
