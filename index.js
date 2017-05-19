@@ -40,8 +40,8 @@ module.exports = class CallRecordingDownloader {
 
                     const extension = utils.getFileExtension(formatId)
 
-                    const file0Path = path.join(outputPath, `${metadata.id}-0.${extension}`)
-                    const file1Path = path.join(outputPath, `${metadata.id}-1.${extension}`)
+                    const file0Path = path.join(outputPath, `${interactionId}-0.${extension}`)
+                    const file1Path = path.join(outputPath, `${interactionId}-1.${extension}`)
 
                     return Promise.all([
                         downloadFile(uris[0], file0Path),
