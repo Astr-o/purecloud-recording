@@ -3,7 +3,7 @@
 
 # Dev environment directories
 /.vscode/
-/test/output/
+test/output*
 
 # Environment Vars
 .env

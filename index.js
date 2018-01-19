@@ -17,9 +17,8 @@ module.exports = class CallRecordingDownloader {
         this.recordingApi = new purecloud.RecordingApi(session)
     }
 
-    /**
-     * Downloads the two audio files assocaited with the interaction, returns the paths to both files in an array
-     * 
+    /** 
+     * Downloads the two audio files assocaited with the interaction one for the agent channel and one for the customer channel, returns the paths to both files in an array
      * @param {string} interactionId 
      * @param {string} outputPath 
      * @param {string} formatId 
@@ -29,19 +28,13 @@ module.exports = class CallRecordingDownloader {
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
     downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL) {
-        return api.getCallRecordingMetadata(this.recordingApi, interactionId, formatId, retrys, retryInterval)
+        return this.getUrisSeperateChannels(interactionId, formatId, retrys, retryInterval)
             .then(
-                function downloadCallRecordings(metadata) {
-                    if (!metadata.mediaUris) {
-                        return Promise.reject(new Error('RecordingUriNotFound'))
-                    }
-
-                    const uris = [metadata.mediaUris[0].mediaUri, metadata.mediaUris[1].mediaUri]
-
+                function downloadCallRecordings([id, uris]) {
                     const extension = utils.getFileExtension(formatId)
 
-                    const file0Path = path.join(outputPath, `${interactionId}-0.${extension}`)
-                    const file1Path = path.join(outputPath, `${interactionId}-1.${extension}`)
+                    const file0Path = path.join(outputPath, `${id}-0.${extension}`)
+                    const file1Path = path.join(outputPath, `${id}-1.${extension}`)
 
                     return Promise.all([
                         downloadFile(uris[0], file0Path),
@@ -49,6 +42,29 @@ module.exports = class CallRecordingDownloader {
                     ])
                 }
             )
+    }
+
+
+    /**
+     * Downloads the two audio files assocaited with the interaction one for the agent channel and one for the customer channel, returns the paths to both files in an array
+     * 
+     * @param {string} interactionId 
+     * @param {string} outputPath 
+     * @param {string} formatId 
+     * @param {number} retrys - optional
+     * @param {number} retryInterval - optional
+     * 
+     * @returns {Promise<[string]>} - path on disk where it was downloaded
+     */
+    downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL) {
+        return this.getUriMergedChannels(interactionId, formatId, retrys, retryInterval)
+            .then(([id, uri]) => {
+                const extension = utils.getFileExtension(formatId)
+
+                const filePath = path.join(outputPath, `${id}-dual-channel.${extension}`)
+
+                return downloadFile(uri, filePath)
+            })
     }
 
     /**
@@ -69,11 +85,45 @@ module.exports = class CallRecordingDownloader {
                         return Promise.reject(new Error('RecordingUriNotFound'))
                     }
 
+                    const recordingId = metadata.id
                     const uris = [metadata.mediaUris[0].mediaUri, metadata.mediaUris[1].mediaUri]
 
-                    return Promise.resolve(uris)
+                    return [recordingId, uris]
                 }
             )
+    }
+
+    /**
+     * Gets the uri of the a single audio file with merged agent and customer channels
+     * 
+     * @param {string} interactionId 
+     * @param {string} formatId 
+     * @param {number} retrys - optional
+     * @param {number} retryInterval - optional
+     * 
+     * @returns {Promise<string>} - uri of the merged recording
+     */
+    getUriMergedChannels(interactionId, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL) {
+        return api.getCallRecordingMetadata(this.recordingApi, interactionId, formatId, retrys, retryInterval)
+            .then(metadata => {
+                const recordingId = metadata.id
+
+                if (!recordingId) {
+                    return Promise.reject(new Error('RecordingIdNotFound'))
+                }
+
+                return api.getMergedCallRecordingMetadata(this.recordingApi, interactionId, recordingId, formatId, retrys, retryInterval)
+            })
+            .then(metadata => {
+                if (!metadata.mediaUris || !metadata.mediaUris.S || !metadata.mediaUris.S.mediaUri) {
+                    return Promise.reject(new Error('RecordingUriNotFound'))
+                }
+
+                const recordingId = metadata.id
+                const uri = metadata.mediaUris.S.mediaUri
+
+                return [recordingId, uri]
+            })
     }
 
 
