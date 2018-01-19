@@ -1,5 +1,7 @@
 # Purecloud Recording Downloader
 
+[![npm version](https://badge.fury.io/js/purecloud-recording.svg)](https://badge.fury.io/js/purecloud-recording)
+
 This module is a wrapper for the purecloud javascript sdk that allows you to quickly download voice recordings for backup.
 
 ## Installation
