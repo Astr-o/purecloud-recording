@@ -18,9 +18,7 @@ function testSeprateChannels() {
 
         const outputDir = path.join(__dirname, 'output-split')
 
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir)
-        } else {
+        if (fs.existsSync(outputDir)) {
             // if old test data exists delete
             const files = fs.readdirSync(outputDir)
 
@@ -72,9 +70,7 @@ function testMergedChannels() {
 
         const outputDir = path.join(__dirname, 'output-merged')
 
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir)
-        } else {
+        if (fs.existsSync(outputDir)) {
             // if old test data exists delete
             const files = fs.readdirSync(outputDir)
 

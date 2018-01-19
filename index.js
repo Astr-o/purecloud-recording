@@ -11,6 +11,7 @@ const utils = require('./lib/utils')
 const DEFAULT_RETRY_INTERVAL = 60 * 1000 // 60 secs
 const DEFAULT_RETRYS = 3
 const DEFAULT_FORMAT_ID = 'WAV'
+const DEFAULT_CREATE_DIR = true
 
 module.exports = class CallRecordingDownloader {
     constructor(session) {
@@ -24,24 +25,25 @@ module.exports = class CallRecordingDownloader {
      * @param {string} formatId 
      * @param {number} retrys - optional
      * @param {number} retryInterval - optional
+     * @param {boolean} createDir - optional - default true, if true output path will created automatically if it does not exist, if false an error will be thrown 
      * 
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
-    downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL) {
-        return this.getUrisSeperateChannels(interactionId, formatId, retrys, retryInterval)
-            .then(
-                function downloadCallRecordings([id, uris]) {
-                    const extension = utils.getFileExtension(formatId)
+    downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR) {
+        return utils.checkDirExists(outputPath, createDir)
+            .then(() => this.getUrisSeperateChannels(interactionId, formatId, retrys, retryInterval))
+            .then(function downloadCallRecordings([id, uris]) {
+                const extension = utils.getFileExtension(formatId)
 
-                    const file0Path = path.join(outputPath, `${id}-0.${extension}`)
-                    const file1Path = path.join(outputPath, `${id}-1.${extension}`)
 
-                    return Promise.all([
-                        downloadFile(uris[0], file0Path),
-                        downloadFile(uris[1], file1Path)
-                    ])
-                }
-            )
+                const file0Path = path.join(outputPath, `${id}-0.${extension}`)
+                const file1Path = path.join(outputPath, `${id}-1.${extension}`)
+
+                return Promise.all([
+                    downloadFile(uris[0], file0Path),
+                    downloadFile(uris[1], file1Path)
+                ])
+            })
     }
 
 
@@ -53,11 +55,13 @@ module.exports = class CallRecordingDownloader {
      * @param {string} formatId 
      * @param {number} retrys - optional
      * @param {number} retryInterval - optional
+     * @param {boolean} createDir - optional - default true, if true output path will created automatically if it does not exist, if false an error will be thrown 
      * 
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
-    downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL) {
-        return this.getUriMergedChannels(interactionId, formatId, retrys, retryInterval)
+    downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR) {
+        return utils.checkDirExists(outputPath, createDir)
+            .then(() => this.getUriMergedChannels(interactionId, formatId, retrys, retryInterval))
             .then(([id, uri]) => {
                 const extension = utils.getFileExtension(formatId)
 
@@ -74,6 +78,7 @@ module.exports = class CallRecordingDownloader {
      * @param {string} formatId 
      * @param {number} retrys - optional
      * @param {number} retryInterval - optional
+     * 
      * 
      * @returns {Promise<[string]>} - uris of both recordings
      */
