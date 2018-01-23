@@ -86,7 +86,7 @@ function testMergedChannels() {
                 const downloader = new RecordingDownloader(session)
                 const downloadFolder = path.join(__dirname, 'output-merged')
 
-                return downloader.downloadMergedChannels('930bcb90-f62e-4f41-8e09-b35b9b9ff1a8', downloadFolder, 'WAV', 3, 15 * 1000)
+                return downloader.downloadMergedChannels('930bcb90-f62e-4f41-8e09-b35b9b9ff1a8', downloadFolder, 'WAV', 3, 15 * 1000, true, 'test-file')
                     .then(path => {
                         console.log(`downloaded files ${path}`)
 

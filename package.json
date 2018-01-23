@@ -1,6 +1,6 @@
 {
     "name": "purecloud-recording",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "This module is a wrapper for the purecloud javascript sdk that allows you to quickly download voice recordings for backup",
     "main": "index.js",
     "scripts": {

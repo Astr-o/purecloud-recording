@@ -29,15 +29,15 @@ module.exports = class CallRecordingDownloader {
      * 
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
-    downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR) {
+    downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR, fileName = null) {
         return utils.checkDirExists(outputPath, createDir)
             .then(() => this.getUrisSeperateChannels(interactionId, formatId, retrys, retryInterval))
             .then(function downloadCallRecordings([id, uris]) {
                 const extension = utils.getFileExtension(formatId)
 
 
-                const file0Path = path.join(outputPath, `${id}-0.${extension}`)
-                const file1Path = path.join(outputPath, `${id}-1.${extension}`)
+                const file0Path = path.join(outputPath, `${fileName ? fileName : id}-0.${extension}`)
+                const file1Path = path.join(outputPath, `${fileName ? fileName : id}-1.${extension}`)
 
                 return Promise.all([
                     downloadFile(uris[0], file0Path),
@@ -59,13 +59,13 @@ module.exports = class CallRecordingDownloader {
      * 
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
-    downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR) {
+    downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR, fileName = null) {
         return utils.checkDirExists(outputPath, createDir)
             .then(() => this.getUriMergedChannels(interactionId, formatId, retrys, retryInterval))
             .then(([id, uri]) => {
                 const extension = utils.getFileExtension(formatId)
 
-                const filePath = path.join(outputPath, `${id}-dual-channel.${extension}`)
+                const filePath = path.join(outputPath, `${fileName ? fileName : id}-dual-channel.${extension}`)
 
                 return downloadFile(uri, filePath)
             })

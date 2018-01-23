@@ -28,7 +28,9 @@ session.login()
         const downloader = new RecordingDownloader(session)
         const downloadFolder = path.join
 
-        downloader.downloadSeperateChannels('930bcb90-f62e-4f41-8e09-b35b9b9ff1a8', downloadFolder, 'WAV', 3, 15 * 1000)
+        // * is optional arguments
+        // downloader.downloadSeperateChannels(conversationId, folderPath, fileFormat, retries*, waitBetweenRetrys*, createFolder*, fileName*)
+        downloader.downloadSeperateChannels('930bcb90-f62e-4f41-8e09-b35b9b9ff1a8', downloadFolder, 'WAV', 3, 15 * 1000, true)
             .then(([path0, path1]) => {
                 console.log(`downloaded files ${path0} - ${path1}`)
                 console.log('split files downloaded successfully')
@@ -56,6 +58,8 @@ session.login()
         const downloader = new RecordingDownloader(session)
         const downloadFolder = path.join
 
+        // * is optional arguments
+        // downloader.downloadSeperateChannels(conversationId, folderPath, fileFormat, retries*, waitBetweenRetrys*, createFolder*, fileName*)
         downloader.downloadMergedChannels('930bcb90-f62e-4f41-8e09-b35b9b9ff1a8', downloadFolder, 'MP3', 3, 15 * 1000)
             .then(([path0, path1]) => {
                 console.log(`downloaded files ${path}`)
@@ -69,6 +73,9 @@ session.login()
 ```
 
 ## Change log
+
+* v0.3.1 - 23/01/2018
+  * add optional file name variable to *downlaod methods allowing you to specify a custom file name for the output files. 
 
 * v0.3.0 - 19/01/2018
   * Adds downloadMergedRecording method this will download a single file containing both the agent and the client recording channels
