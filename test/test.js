@@ -16,7 +16,7 @@ const session = purecloud.PureCloudSession({
 function testSeprateChannels() {
     try {
 
-        const outputDir = path.join(__dirname, 'output-split')
+        const outputDir = path.join(__dirname, 'output-split', 'subfolder')
 
         if (fs.existsSync(outputDir)) {
             // if old test data exists delete

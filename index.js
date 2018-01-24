@@ -30,7 +30,7 @@ module.exports = class CallRecordingDownloader {
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
     downloadSeperateChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR, fileName = null) {
-        return utils.checkDirExists(outputPath, createDir)
+        return utils.checkDirExistsAndCreate(outputPath, createDir)
             .then(() => this.getUrisSeperateChannels(interactionId, formatId, retrys, retryInterval))
             .then(function downloadCallRecordings([id, uris]) {
                 const extension = utils.getFileExtension(formatId)
@@ -60,7 +60,7 @@ module.exports = class CallRecordingDownloader {
      * @returns {Promise<[string]>} - path on disk where it was downloaded
      */
     downloadMergedChannels(interactionId, outputPath, formatId = DEFAULT_FORMAT_ID, retrys = DEFAULT_RETRYS, retryInterval = DEFAULT_RETRY_INTERVAL, createDir = DEFAULT_CREATE_DIR, fileName = null) {
-        return utils.checkDirExists(outputPath, createDir)
+        return utils.checkDirExistsAndCreate(outputPath, createDir)
             .then(() => this.getUriMergedChannels(interactionId, formatId, retrys, retryInterval))
             .then(([id, uri]) => {
                 const extension = utils.getFileExtension(formatId)
